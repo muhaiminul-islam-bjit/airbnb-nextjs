@@ -150,7 +150,7 @@ const Modal: FC<ModalProps> = ({
                 >
                   <IoMdClose size={18} />
                 </button>
-                <div className="text-lg font-semibold">hello{title}</div>
+                <div className="text-lg font-semibold">{title}</div>
               </div>
               {/*body*/}
               <div className="relative p-6 flex-auto">{body}</div>

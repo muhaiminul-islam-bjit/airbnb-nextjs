@@ -1,4 +1,5 @@
 "use client";
+import { signIn } from "next-auth/react";
 import React from "react";
 import axios from "axios";
 import { AiFillGithub } from "react-icons/ai";
@@ -12,9 +13,13 @@ import Heading from "../Heading";
 import Input from "../inputs/Input";
 import toast from "react-hot-toast";
 import Button from "../Button";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { useRouter } from "next/navigation";
 
-const RegisterModal = () => {
+const LoginModal = () => {
+  const router = useRouter();
   const registerModal = useRegisterModal();
+  const LoginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -22,7 +27,6 @@ const RegisterModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
@@ -31,17 +35,17 @@ const RegisterModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    axios
-      .post("/api/register", data)
-      .then(() => {
-        registerModal.onClose();
-      })
-      .catch((error) => {
-        toast.error("Something went wrong");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    signIn("credentials", {
+      ...data,
+      redirect: false,
+    }).then((callback) => {
+      setIsLoading(false);
+
+      if (callback?.ok) {
+        toast.success("Logged in");
+        router.refresh();
+      }
+    });
   };
 
   const bodyContent = (
@@ -51,14 +55,6 @@ const RegisterModal = () => {
         register={register}
         id="email"
         label="Email"
-        disabled={isLoading}
-        errors={errors}
-        required
-      />
-      <Input
-        register={register}
-        id="name"
-        label="name"
         disabled={isLoading}
         errors={errors}
         required
@@ -107,10 +103,10 @@ const RegisterModal = () => {
   return (
     <Modal
       disabled={isLoading}
-      isOpen={registerModal.isOpen}
-      title="Register"
+      isOpen={LoginModal.isOpen}
+      title="Login"
       actionLabel="Continue"
-      onClose={registerModal.onClose}
+      onClose={LoginModal.onClose}
       onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
       footer={footerContent}
@@ -118,4 +114,4 @@ const RegisterModal = () => {
   );
 };
 
-export default RegisterModal;
+export default LoginModal;
