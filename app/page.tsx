@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
-import ClinetOnly from "./components/ClinetOnly";
+import ClientOnly from "./components/ClinetOnly";
 import Container from "./components/Container";
 import EmptyState from "./components/EmptyState";
 import getListings from "./actions/getListings";
@@ -15,13 +15,13 @@ export default async function Home() {
 
   if (listings.length === 0) {
     return (
-      <ClinetOnly>
+      <ClientOnly>
         <EmptyState showRest />
-      </ClinetOnly>
+      </ClientOnly>
     );
   }
   return (
-    <ClinetOnly>
+    <ClientOnly>
       <Container>
         <div
           className="
@@ -47,6 +47,6 @@ export default async function Home() {
           })}
         </div>
       </Container>
-    </ClinetOnly>
+    </ClientOnly>
   );
 }
