@@ -1,4 +1,5 @@
 import prisma from '@/app/libs/prismadb';
+import { SafeReservation } from '../types';
 
 interface IParams {
     listingId?: string;
@@ -23,12 +24,12 @@ export default async function getListingById(params: IParams) {
 
         return {
             ...listing,
-            createdAt: listing.createdAt.toISOString(),
+            createdAt: listing.createdAt.toString(),
             user: {
                 ...listing.user,
-                createdAt: listing.user.createdAt.toISOString(),
-                updatedAt: listing.user.updatedAt.toISOString(),
-                emailVerifiedAt: listing.user.emailVerified?.toISOString() || null,
+                createdAt: listing.user.createdAt.toString(),
+                updatedAt: listing.user.updatedAt.toString(),
+                emailVerified: listing.user.emailVerified?.toString() || null,
             }
         }
     } catch (error: any) {

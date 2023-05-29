@@ -6,7 +6,7 @@ import ListingInfo from "@/app/components/listings/ListingInfo";
 import ListingReservation from "@/app/components/listings/ListingReservation";
 import { categories } from "@/app/components/navbar/Categories";
 import useLoginModal from "@/app/hooks/useLoginModal";
-import { SafeListing, SafeUser } from "@/app/types";
+import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
 import { Reservation } from "@prisma/client";
 import axios from "axios";
 import {
@@ -26,7 +26,7 @@ const initialDateRange = {
 };
 
 interface ListingClientProps {
-  reservations?: Reservation[];
+  reservations?: SafeReservation[];
   listing: SafeListing & {
     user: SafeUser;
   };
@@ -44,7 +44,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const disabledDate = useMemo(() => {
     let dates: Date[] = [];
 
-    reservations.forEach((reservation: Reservation) => {
+    reservations.forEach((reservation: SafeReservation) => {
       const range = eachDayOfInterval({
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate),
@@ -57,7 +57,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   }, [reservations]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(listing.price);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
 
   const onCreateReservation = useCallback(() => {
@@ -96,7 +96,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
       if (dayCount && listing.price) {
         setTotalPrice(dayCount * listing.price);
       } else {
-        setTotalPrice(listing.price);
+        setTotalPrice(0);
       }
     }
   }, [dateRange.endDate, dateRange.startDate, listing.price]);
